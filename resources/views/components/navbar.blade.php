@@ -11,11 +11,20 @@
         <div class="flex items-center gap-4">
             <button class="p-2 rounded-lg text-slate-600 hover:bg-slate-100">🔔</button>
             <button class="p-2 rounded-lg text-slate-600 hover:bg-slate-100">⚙️</button>
-            <div class="flex items-center gap-3 rounded-2xl bg-white px-4 py-2 shadow-md-soft">
-                <div class="h-10 w-10 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold">{{ strtoupper(substr(auth()->user()?->name, 0, 1)) }}</div>
-                <div class="text-sm">
-                    <div class="font-semibold">{{ auth()->user()?->name }}</div>
-                    <div class="text-slate-500">{{ strtoupper(auth()->user()?->role) }}</div>
+            <div x-data="{ profileOpen: false }" class="relative">
+                <button type="button" @click="profileOpen = !profileOpen" class="flex items-center gap-3 rounded-2xl bg-white px-4 py-2 shadow-md-soft focus:outline-none focus:ring-2 focus:ring-brand-200">
+                    <div class="h-10 w-10 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold">{{ strtoupper(substr(auth()->user()?->name, 0, 1)) }}</div>
+                    <div class="text-sm text-left">
+                        <div class="font-semibold">{{ auth()->user()?->name }}</div>
+                        <div class="text-slate-500">{{ strtoupper(auth()->user()?->role) }}</div>
+                    </div>
+                </button>
+                <div x-show="profileOpen" @click.away="profileOpen = false" @keydown.escape.window="profileOpen = false" x-cloak class="absolute right-0 mt-2 w-48 rounded-2xl border border-slate-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                    <a href="{{ route('profile.edit') }}" class="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-100">Profil</a>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-100">Logout</button>
+                    </form>
                 </div>
             </div>
         </div>

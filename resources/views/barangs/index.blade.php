@@ -47,7 +47,7 @@
     </div>
 
     @if($barangs->count())
-    <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+    <div class="overflow-visible rounded-3xl border border-slate-200 bg-white shadow-sm">
         <table class="w-full text-left text-sm text-slate-700">
             <thead class="bg-slate-50 text-slate-500">
                 <tr>
@@ -75,16 +75,24 @@
                     <td class="px-6 py-4">{{ $barang->stok }}</td>
                     <td class="px-6 py-4">{{ $barang->satuan }}</td>
                     <td class="px-6 py-4">@include('components.stock-badge', ['status' => $barang->status_stok])</td>
-                    <td class="px-6 py-4">
-                        <div class="flex flex-wrap gap-2">
-                                    <a href="{{ route('barangs.detail', $barang) }}" class="inline-flex items-center gap-1 rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 transition-colors">👁️ Lihat</a>
-                                    <a href="{{ route('barangs.edit', $barang) }}" class="inline-flex items-center gap-1 rounded-full bg-amber-500 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-amber-600 transition-colors">✏️ Ubah</a>
-                                    <form action="{{ route('barangs.destroy', $barang) }}" method="POST" class="inline-block">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" onclick="return confirm('Yakin ingin menghapus barang ini?')" class="inline-flex items-center gap-1 rounded-full bg-red-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-red-700 transition-colors">🗑️ Hapus</button>
-                                    </form>
-                        </div>
+                    <td class="px-4 py-3">
+                        <details class="relative inline-block text-left">
+                            <summary class="inline-flex items-center gap-1 rounded-full bg-slate-900 px-3 py-1.5 text-[11px] font-semibold text-white shadow-sm hover:bg-slate-800 cursor-pointer list-none">
+                                Action
+                                <span class="text-slate-300">▾</span>
+                            </summary>
+                            <div class="absolute right-0 z-10 mt-1 w-36 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg">
+                                <a href="{{ route('stok-masuk.create', ['barang_id' => $barang->id]) }}" class="block px-3 py-2 text-xs text-slate-700 hover:bg-slate-50">➕ Stok Masuk</a>
+                                <a href="{{ route('stok-keluar.create', ['barang_id' => $barang->id]) }}" class="block px-3 py-2 text-xs text-slate-700 hover:bg-slate-50">➖ Stok Keluar</a>
+                                <a href="{{ route('barangs.detail', $barang) }}" class="block px-3 py-2 text-xs text-slate-700 hover:bg-slate-50">👁️ Lihat</a>
+                                <a href="{{ route('barangs.edit', $barang) }}" class="block px-3 py-2 text-xs text-slate-700 hover:bg-slate-50">✏️ Ubah</a>
+                                <form action="{{ route('barangs.destroy', $barang) }}" method="POST" class="border-t border-slate-200">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('Yakin ingin menghapus barang ini?')" class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-slate-50">🗑️ Hapus</button>
+                                </form>
+                            </div>
+                        </details>
                     </td>
                 </tr>
                 @endforeach

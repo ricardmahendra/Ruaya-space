@@ -15,7 +15,8 @@ Route::get('/', fn () => redirect()->route('login'));
 require __DIR__.'/auth.php';
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('role:admin');
+    Route::get('/activity-logs', [DashboardController::class, 'activityLogs'])->name('activity-logs.index')->middleware('role:admin');
 
     Route::resource('kategoris', KategoriController::class)->middleware('role:admin');
     Route::resource('suppliers', SupplierController::class)->middleware('role:admin');
@@ -25,6 +26,23 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('stok-masuk', StokMasukController::class)->except(['show', 'edit', 'update', 'destroy']);
     Route::resource('stok-keluar', StokKeluarController::class)->except(['show', 'edit', 'update', 'destroy']);
+
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('menus', App\Http\Controllers\MenuController::class);
+        Route::resource('menu-recipes', App\Http\Controllers\MenuRecipeController::class)->except(['show']);
+    });
+
+    Route::middleware('role:kasir')->prefix('kasir')->name('kasir.')->group(function () {
+        Route::get('/dashboard', [App\Http\Controllers\KasirController::class, 'dashboard'])->name('dashboard');
+        Route::get('/pos', [App\Http\Controllers\KasirController::class, 'pos'])->name('pos');
+        Route::post('/pos/add-to-cart', [App\Http\Controllers\KasirController::class, 'addToCart'])->name('pos.add');
+        Route::put('/pos/cart/{menu}', [App\Http\Controllers\KasirController::class, 'updateCart'])->name('pos.update');
+        Route::delete('/pos/cart/{menu}', [App\Http\Controllers\KasirController::class, 'removeFromCart'])->name('pos.remove');
+        Route::post('/pos/checkout', [App\Http\Controllers\KasirController::class, 'checkout'])->name('pos.checkout');
+        Route::get('/menu-stock', [App\Http\Controllers\KasirController::class, 'menuStock'])->name('menu-stock');
+        Route::get('/history', [App\Http\Controllers\KasirController::class, 'history'])->name('history');
+        Route::get('/receipt/{sale}', [App\Http\Controllers\KasirController::class, 'receipt'])->name('receipt');
+    });
 
     Route::prefix('laporan')->name('laporan.')->group(function () {
         Route::get('/stok', [LaporanController::class, 'stok'])->name('stok');

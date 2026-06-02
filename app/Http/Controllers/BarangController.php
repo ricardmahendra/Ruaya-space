@@ -25,6 +25,38 @@ class BarangController extends Controller
             $query->where('kategori_id', $request->kategori);
         }
 
+        if ($request->filled('export')) {
+            $barangs = $query->orderBy('nama_barang')->get();
+
+            $filename = 'barang-export-'.now()->format('Y-m-d').'.csv';
+            $headers = [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            ];
+
+            $callback = function () use ($barangs) {
+                $file = fopen('php://output', 'w');
+                fputcsv($file, ['Kode Barang', 'Nama Barang', 'Kategori', 'Stock', 'Satuan', 'Reorder Point', 'Status', 'Deskripsi']);
+
+                foreach ($barangs as $barang) {
+                    fputcsv($file, [
+                        $barang->kode_barang,
+                        $barang->nama_barang,
+                        $barang->kategori?->nama_kategori,
+                        $barang->stok,
+                        $barang->satuan,
+                        $barang->reorder_point,
+                        $barang->status_stok,
+                        $barang->deskripsi,
+                    ]);
+                }
+
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
+        }
+
         $barangs = $query->orderBy('nama_barang')->paginate(10)->withQueryString();
         $kategoris = Kategori::orderBy('nama_kategori')->get();
 

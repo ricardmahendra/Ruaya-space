@@ -27,7 +27,7 @@
                     <td class="px-6 py-4">{{ $item->tanggal_keluar->format('Y-m-d') }}</td>
                     <td class="px-6 py-4">{{ $item->barang->nama_barang ?? '-' }}</td>
                     <td class="px-6 py-4">{{ $item->jumlah }} {{ $item->barang?->satuan }}</td>
-                    <td class="px-6 py-4">{{ $item->tujuan }}</td>
+                    <td class="px-6 py-4">{{ $item->tujuan_penggunaan }}</td>
                     <td class="px-6 py-4">{{ $item->user->name }}</td>
                 </tr>
                 @endforeach

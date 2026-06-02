@@ -18,17 +18,21 @@
                 <select name="barang_id" class="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" required>
                     <option value="">Pilih barang</option>
                     @foreach($barangs as $barang)
-                        <option value="{{ $barang->id }}">{{ $barang->nama_barang }}</option>
+                        <option value="{{ $barang->id }}" {{ old('barang_id', request('barang_id')) == $barang->id ? 'selected' : '' }}>{{ $barang->nama_barang }}</option>
                     @endforeach
                 </select>
             </div>
             <div>
                 <label class="text-sm font-medium text-slate-700">Jumlah Keluar</label>
-                <input type="number" name="jumlah" min="1" class="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" required />
+                <input type="number" name="jumlah" min="1" value="{{ old('jumlah') }}" class="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" required />
+            </div>
+            <div>
+                <label class="text-sm font-medium text-slate-700">Tanggal Keluar</label>
+                <input type="date" name="tanggal_keluar" value="{{ old('tanggal_keluar', now()->format('Y-m-d')) }}" class="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" required />
             </div>
             <div>
                 <label class="text-sm font-medium text-slate-700">Tujuan Pengeluaran</label>
-                <input name="tujuan" class="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" placeholder="Contoh: Dapur, Bar, Penjualan" />
+                <input name="tujuan_penggunaan" value="{{ old('tujuan_penggunaan') }}" class="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" placeholder="Contoh: Dapur, Bar, Penjualan" required />
             </div>
             <button type="submit" class="rounded-3xl border border-black bg-gradient-to-r from-slate-400 via-slate-600 to-slate-900 px-6 py-3 text-sm font-medium text-black shadow-md hover:from-slate-500 hover:via-slate-700 hover:to-black transition">Simpan Stok Keluar</button>
         </form>

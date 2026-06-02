@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ActivityLog;
 use App\Models\Barang;
 use App\Models\Kategori;
+use App\Models\Menu;
+use App\Models\MenuRecipe;
 use App\Models\StokKeluar;
 use App\Models\StokMasuk;
 use Illuminate\Http\Request;
@@ -19,6 +21,8 @@ class DashboardController extends Controller
 
         return view('dashboard.index', [
             'total_barang' => Barang::count(),
+            'total_menu' => Menu::count(),
+            'total_resep' => MenuRecipe::count(),
             'total_stok' => Barang::sum('stok'),
             'barang_menipis' => Barang::whereColumn('stok', '<=', 'reorder_point')->count(),
             'barang_masuk_hari' => StokMasuk::whereDate('tanggal_masuk', today())->sum('jumlah'),
@@ -31,6 +35,13 @@ class DashboardController extends Controller
             'recent_activity' => ActivityLog::with('user')->latest()->take(10)->get(),
             'inventory_focus' => Barang::with('kategori')->orderBy('stok')->take(8)->get(),
             'alert_reorder' => Barang::whereColumn('stok', '<=', 'reorder_point')->get(),
+        ]);
+    }
+
+    public function activityLogs()
+    {
+        return view('activity-logs.index', [
+            'activities' => ActivityLog::with('user')->latest()->paginate(20),
         ]);
     }
 }

@@ -10,6 +10,7 @@ use App\Models\FifoHistory;
 use App\Models\StokKeluar;
 use App\Models\StokMasuk;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -17,12 +18,65 @@ class LaporanController extends Controller
 {
     public function stok(Request $request)
     {
+        $period = $this->resolveReportPeriod($request);
+
         $barangs = Barang::with('kategori')
-            ->when($request->filled('date_from'), fn($query) => $query->whereDate('created_at', '>=', $request->date_from))
-            ->when($request->filled('date_to'), fn($query) => $query->whereDate('created_at', '<=', $request->date_to))
+            ->withSum(['stokMasuks as total_masuk' => function ($query) use ($period) {
+                $query->whereBetween('tanggal_masuk', [$period['from'], $period['to']]);
+            }], 'jumlah')
+            ->withSum(['stokKeluars as total_keluar' => function ($query) use ($period) {
+                $query->whereBetween('tanggal_keluar', [$period['from'], $period['to']]);
+            }], 'jumlah')
             ->paginate(12);
 
-        return view('laporan.stok', compact('barangs'));
+        $barangs->getCollection()->transform(function ($barang) {
+            $barang->total_masuk = $barang->total_masuk ?: 0;
+            $barang->total_keluar = $barang->total_keluar ?: 0;
+            $barang->usage_percentage = ($barang->total_masuk + $barang->total_keluar) > 0
+                ? round(($barang->total_keluar / ($barang->total_masuk + $barang->total_keluar)) * 100, 2)
+                : 0;
+
+            return $barang;
+        });
+
+        return view('laporan.stok', [
+            'barangs' => $barangs,
+            'periodLabel' => $period['label'],
+            'selectedMonth' => $period['month'],
+            'selectedYear' => $period['year'],
+            'dateFrom' => $request->input('date_from'),
+            'dateTo' => $request->input('date_to'),
+        ]);
+    }
+
+    protected function resolveReportPeriod(Request $request): array
+    {
+        if ($request->filled('date_from') && $request->filled('date_to')) {
+            $from = Carbon::createFromFormat('Y-m-d', $request->date_from)->startOfDay();
+            $to = Carbon::createFromFormat('Y-m-d', $request->date_to)->endOfDay();
+
+            return [
+                'from' => $from,
+                'to' => $to,
+                'label' => "Periode {$from->format('d/m/Y')} - {$to->format('d/m/Y')}",
+                'month' => null,
+                'year' => null,
+            ];
+        }
+
+        $month = preg_match('/^\d{1,2}$/', $request->input('month', '')) ? intval($request->input('month')) : now()->month;
+        $year = preg_match('/^\d{4}$/', $request->input('year', '')) ? intval($request->input('year')) : now()->year;
+        $month = max(1, min(12, $month));
+
+        $date = Carbon::create($year, $month, 1);
+
+        return [
+            'from' => $date->copy()->startOfMonth(),
+            'to' => $date->copy()->endOfMonth()->endOfDay(),
+            'label' => "Bulan {$date->format('F Y')}",
+            'month' => $date->format('m'),
+            'year' => $date->format('Y'),
+        ];
     }
 
     public function masuk(Request $request)
@@ -90,13 +144,42 @@ class LaporanController extends Controller
     protected function getDataLaporan(string $type, Request $request): array
     {
         return match ($type) {
-            'stok' => ['barangs' => Barang::with('kategori')->get()],
+            'stok' => $this->getStokLaporanData($request),
             'masuk' => ['stokMasuks' => StokMasuk::with(['barang', 'supplier', 'user'])->get()],
             'keluar' => ['stokKeluars' => StokKeluar::with(['barang', 'user'])->get()],
             'fifo' => ['histories' => FifoHistory::with(['barang', 'stokMasuk', 'stokKeluar'])->get()],
             'menipis' => ['barangs' => Barang::with('kategori')->whereColumn('stok', '<=', 'reorder_point')->get()],
             default => ['barangs' => Barang::take(0)->get()],
         };
+    }
+
+    protected function getStokLaporanData(Request $request): array
+    {
+        $period = $this->resolveReportPeriod($request);
+
+        $barangs = Barang::with('kategori')
+            ->withSum(['stokMasuks as total_masuk' => function ($query) use ($period) {
+                $query->whereBetween('tanggal_masuk', [$period['from'], $period['to']]);
+            }], 'jumlah')
+            ->withSum(['stokKeluars as total_keluar' => function ($query) use ($period) {
+                $query->whereBetween('tanggal_keluar', [$period['from'], $period['to']]);
+            }], 'jumlah')
+            ->get();
+
+        $barangs->transform(function ($barang) {
+            $barang->total_masuk = $barang->total_masuk ?: 0;
+            $barang->total_keluar = $barang->total_keluar ?: 0;
+            $barang->usage_percentage = ($barang->total_masuk + $barang->total_keluar) > 0
+                ? round(($barang->total_keluar / ($barang->total_masuk + $barang->total_keluar)) * 100, 2)
+                : 0;
+
+            return $barang;
+        });
+
+        return [
+            'barangs' => $barangs,
+            'periodLabel' => $period['label'],
+        ];
     }
 
     protected function getExportClass(string $type)

@@ -2,12 +2,16 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
             <h1 class="text-3xl font-semibold text-slate-900">Detail Barang</h1>
             <p class="text-slate-500">Informasi lengkap dan histori stok FIFO.</p>
         </div>
-        <a href="{{ route('barangs.index') }}" class="rounded-3xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200">Kembali</a>
+        <div class="flex flex-wrap gap-3">
+            <a href="{{ route('stok-masuk.create', ['barang_id' => $barang->id]) }}" class="rounded-3xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-600 transition">Tambah Stok Masuk</a>
+            <a href="{{ route('stok-keluar.create', ['barang_id' => $barang->id]) }}" class="rounded-3xl bg-red-500 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-red-600 transition">Tambah Stok Keluar</a>
+            <a href="{{ route('barangs.index') }}" class="rounded-3xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200">Kembali</a>
+        </div>
     </div>
 
     <div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">

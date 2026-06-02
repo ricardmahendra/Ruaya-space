@@ -15,7 +15,9 @@
     </head>
 <body x-data="{ sidebarOpen: false }" class="font-sans antialiased text-slate-900">
     <div class="min-h-screen flex bg-[linear-gradient(180deg,#f8fafc,white)]">
-        @include('components.sidebar')
+        @unless(request()->routeIs('kasir.*'))
+            @include('components.sidebar')
+        @endunless
         <div class="flex-1 min-h-screen flex flex-col">
             @include('components.navbar')
             <main class="flex-1 p-4 sm:p-6 lg:p-8">

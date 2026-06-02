@@ -10,8 +10,12 @@
             </div>
             <div class="inline-flex items-center gap-2 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">Monthly view</div>
         </div>
-        <div class="mt-8 grid gap-4 md:grid-cols-4">
+        <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             @component('components.stat-card', ['title' => "TODAY'S TOTAL ITEMS", 'value' => number_format($total_barang), 'badge' => '+12% vs last month'])
+            @endcomponent
+            @component('components.stat-card', ['title' => 'TOTAL MENU', 'value' => number_format($total_menu), 'badge' => 'Master Menu'])
+            @endcomponent
+            @component('components.stat-card', ['title' => 'TOTAL BAHAN MENU', 'value' => number_format($total_resep), 'badge' => 'Recipe Items'])
             @endcomponent
             @component('components.stat-card', ['title' => 'LOW STOCK ALERTS', 'value' => number_format($barang_menipis), 'badge' => 'Critical'])
             @endcomponent
@@ -22,7 +26,7 @@
         </div>
     </div>
 
-    <div class="grid gap-6 xl:grid-cols-[1.8fr_1fr]">
+    <div class="grid gap-6">
         <div class="rounded-3xl bg-white p-8 shadow-sm">
             <div class="flex items-center justify-between gap-4">
                 <div>
@@ -32,21 +36,6 @@
                 <div class="rounded-2xl bg-slate-50 px-4 py-2 text-sm text-slate-600">Year</div>
             </div>
             <canvas id="stockChart" class="mt-6"></canvas>
-        </div>
-        <div class="rounded-3xl bg-white p-8 shadow-sm">
-            <div class="mb-6 flex items-center justify-between">
-                <div>
-                    <h2 class="text-xl font-semibold text-slate-900">Recent Activity</h2>
-                    <p class="text-sm text-slate-500">Log aktivitas terbaru untuk operasional.</p>
-                </div>
-            </div>
-            <div class="space-y-4">
-                @foreach($recent_activity as $activity)
-                    @component('components.activity-item', ['title' => $activity->action, 'icon' => '📌', 'time' => $activity->created_at->diffForHumans()])
-                        {{ $activity->deskripsi }}
-                    @endcomponent
-                @endforeach
-            </div>
         </div>
     </div>
 

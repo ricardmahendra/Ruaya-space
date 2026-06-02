@@ -6,7 +6,7 @@
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <div class="text-slate-900 font-bold text-lg">Ruaya Space</div>
-                    <div class="text-xs text-slate-500 uppercase">COFFEE ATELIER</div>
+                    <div class="text-xs text-slate-500 uppercase">COFFEE-SPACE-COMMUNITY</div>
                 </div>
                 <button @click="sidebarOpen = false" class="text-slate-600 hover:text-slate-900">✕</button>
             </div>
@@ -17,6 +17,10 @@
                 @if(auth()->check() && auth()->user()->role === 'admin')
                     <a href="{{ route('kategoris.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('kategoris.*') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Kategori</a>
                     <a href="{{ route('suppliers.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('suppliers.*') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Supplier</a>
+                    <a href="{{ route('menus.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('menus.*') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Master Menu</a>
+                    <a href="{{ route('menus.create') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('menus.create') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Tambah Menu</a>
+                    <a href="{{ route('menu-recipes.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('menu-recipes.*') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Menu Recipes</a>
+                    <a href="{{ route('menu-recipes.create') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('menu-recipes.create') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Tambah Resep</a>
                 @endif
 
                 <a href="{{ route('stok-masuk.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('stok-masuk.*') || request()->routeIs('stok-keluar.*') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Operations</a>
@@ -46,6 +50,10 @@
                 @if(auth()->check() && auth()->user()->role === 'admin')
                     <a href="{{ route('kategoris.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('kategoris.*') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Kategori</a>
                     <a href="{{ route('suppliers.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('suppliers.*') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Supplier</a>
+                    <a href="{{ route('menus.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('menus.*') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Master Menu</a>
+                    <a href="{{ route('menus.create') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('menus.create') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Tambah Menu</a>
+                    <a href="{{ route('menu-recipes.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('menu-recipes.*') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Menu Recipes</a>
+                    <a href="{{ route('menu-recipes.create') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('menu-recipes.create') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Tambah Resep</a>
                 @endif
 
                 <a href="{{ route('stok-masuk.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium {{ request()->routeIs('stok-masuk.*') || request()->routeIs('stok-keluar.*') ? 'bg-brand-50 border-l-4 border-brand-500 text-slate-900' : 'text-slate-600 hover:bg-slate-50' }}">Operations</a>
